@@ -902,7 +902,7 @@
                     }
                 ],
                 "consumes": [
-                    "multipart/form-data"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -910,19 +910,21 @@
                 "tags": [
                     "AutoCode"
                 ],
-                "summary": "安装插件",
+                "summary": "创建插件模板",
                 "parameters": [
                     {
-                        "type": "file",
-                        "description": "this is a test file",
-                        "name": "plug",
-                        "in": "formData",
-                        "required": true
+                        "description": "创建插件模板",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/system.SysAutoCode"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "安装插件成功",
+                        "description": "创建插件模板成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -932,10 +934,8 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
+                                            "type": "object",
+                                            "additionalProperties": true
                                         },
                                         "msg": {
                                             "type": "string"
@@ -1369,6 +1369,60 @@
                 }
             }
         },
+        "/autoCode/installPlugin": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AutoCode"
+                ],
+                "summary": "安装插件",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "this is a test file",
+                        "name": "plug",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "安装插件成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/autoCode/preview": {
             "post": {
                 "security": [
@@ -1400,6 +1454,60 @@
                 "responses": {
                     "200": {
                         "description": "预览创建后的代码",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": true
+                                        },
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/autoCode/pubPlug": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AutoCode"
+                ],
+                "summary": "打包插件",
+                "parameters": [
+                    {
+                        "description": "打包插件",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/system.SysAutoCode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "打包插件成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -4830,6 +4938,39 @@
                 }
             }
         },
+        "config.Email": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "description": "收件人",
+                    "type": "string"
+                },
+                "host": {
+                    "description": "服务器地址",
+                    "type": "string"
+                },
+                "is-ssl": {
+                    "description": "是否SSL",
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "端口",
+                    "type": "integer"
+                },
+                "secret": {
+                    "description": "密钥",
+                    "type": "string"
+                },
+                "to": {
+                    "description": "收件人:多个以英文逗号分隔",
+                    "type": "string"
+                }
+            }
+        },
         "config.Excel": {
             "type": "object",
             "properties": {
@@ -5182,11 +5323,7 @@
                 },
                 "autocode": {
                     "description": "auto",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/config.Autocode"
-                        }
-                    ]
+                    "$ref": "#/definitions/config.Autocode"
                 },
                 "aws-s3": {
                     "$ref": "#/definitions/config.AwsS3"
@@ -5196,11 +5333,7 @@
                 },
                 "cors": {
                     "description": "跨域配置",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/config.CORS"
-                        }
-                    ]
+                    "$ref": "#/definitions/config.CORS"
                 },
                 "db-list": {
                     "type": "array",
@@ -5209,7 +5342,7 @@
                     }
                 },
                 "email": {
-                    "$ref": "#/definitions/github_com_flipped-aurora_gin-vue-admin_server_config.Email"
+                    "$ref": "#/definitions/config.Email"
                 },
                 "excel": {
                     "$ref": "#/definitions/config.Excel"
@@ -5222,22 +5355,14 @@
                 },
                 "local": {
                     "description": "oss",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/config.Local"
-                        }
-                    ]
+                    "$ref": "#/definitions/config.Local"
                 },
                 "mssql": {
                     "$ref": "#/definitions/config.Mssql"
                 },
                 "mysql": {
                     "description": "gorm",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/config.Mysql"
-                        }
-                    ]
+                    "$ref": "#/definitions/config.Mysql"
                 },
                 "oracle": {
                     "$ref": "#/definitions/config.Oracle"
@@ -5478,11 +5603,7 @@
                 },
                 "sysUser": {
                     "description": "管理详情",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/system.SysUser"
-                        }
-                    ]
+                    "$ref": "#/definitions/system.SysUser"
                 },
                 "sysUserAuthorityID": {
                     "description": "管理角色ID",
@@ -5591,39 +5712,6 @@
                 },
                 "url": {
                     "description": "文件地址",
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_flipped-aurora_gin-vue-admin_server_config.Email": {
-            "type": "object",
-            "properties": {
-                "from": {
-                    "description": "收件人",
-                    "type": "string"
-                },
-                "host": {
-                    "description": "服务器地址",
-                    "type": "string"
-                },
-                "is-ssl": {
-                    "description": "是否SSL",
-                    "type": "boolean"
-                },
-                "nickname": {
-                    "description": "昵称",
-                    "type": "string"
-                },
-                "port": {
-                    "description": "端口",
-                    "type": "integer"
-                },
-                "secret": {
-                    "description": "密钥",
-                    "type": "string"
-                },
-                "to": {
-                    "description": "收件人:多个以英文逗号分隔",
                     "type": "string"
                 }
             }
@@ -6280,34 +6368,6 @@
                 }
             }
         },
-        "system.Meta": {
-            "type": "object",
-            "properties": {
-                "activeName": {
-                    "type": "string"
-                },
-                "closeTab": {
-                    "description": "自动关闭tab",
-                    "type": "boolean"
-                },
-                "defaultMenu": {
-                    "description": "是否是基础路由（开发中）",
-                    "type": "boolean"
-                },
-                "icon": {
-                    "description": "菜单图标",
-                    "type": "string"
-                },
-                "keepAlive": {
-                    "description": "是否缓存",
-                    "type": "boolean"
-                },
-                "title": {
-                    "description": "菜单名",
-                    "type": "string"
-                }
-            }
-        },
         "system.SysApi": {
             "type": "object",
             "properties": {
@@ -6420,6 +6480,9 @@
         "system.SysBaseMenu": {
             "type": "object",
             "properties": {
+                "activeName": {
+                    "type": "string"
+                },
                 "authoritys": {
                     "type": "array",
                     "items": {
@@ -6432,6 +6495,10 @@
                         "$ref": "#/definitions/system.SysBaseMenu"
                     }
                 },
+                "closeTab": {
+                    "description": "自动关闭tab",
+                    "type": "boolean"
+                },
                 "component": {
                     "description": "对应前端文件路径",
                     "type": "string"
@@ -6440,27 +6507,31 @@
                     "description": "创建时间",
                     "type": "string"
                 },
+                "defaultMenu": {
+                    "description": "是否是基础路由（开发中）",
+                    "type": "boolean"
+                },
                 "hidden": {
                     "description": "是否在列表隐藏",
                     "type": "boolean"
                 },
+                "icon": {
+                    "description": "菜单图标",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键ID",
                     "type": "integer"
+                },
+                "keepAlive": {
+                    "description": "是否缓存",
+                    "type": "boolean"
                 },
                 "menuBtn": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/system.SysBaseMenuBtn"
                     }
-                },
-                "meta": {
-                    "description": "附加属性",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/system.Meta"
-                        }
-                    ]
                 },
                 "name": {
                     "description": "路由name",
@@ -6483,6 +6554,10 @@
                 "sort": {
                     "description": "排序标记",
                     "type": "integer"
+                },
+                "title": {
+                    "description": "菜单名",
+                    "type": "string"
                 },
                 "updatedAt": {
                     "description": "更新时间",
@@ -6627,6 +6702,9 @@
         "system.SysMenu": {
             "type": "object",
             "properties": {
+                "activeName": {
+                    "type": "string"
+                },
                 "authoritys": {
                     "type": "array",
                     "items": {
@@ -6645,6 +6723,10 @@
                         "$ref": "#/definitions/system.SysMenu"
                     }
                 },
+                "closeTab": {
+                    "description": "自动关闭tab",
+                    "type": "boolean"
+                },
                 "component": {
                     "description": "对应前端文件路径",
                     "type": "string"
@@ -6653,13 +6735,25 @@
                     "description": "创建时间",
                     "type": "string"
                 },
+                "defaultMenu": {
+                    "description": "是否是基础路由（开发中）",
+                    "type": "boolean"
+                },
                 "hidden": {
                     "description": "是否在列表隐藏",
                     "type": "boolean"
                 },
+                "icon": {
+                    "description": "菜单图标",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键ID",
                     "type": "integer"
+                },
+                "keepAlive": {
+                    "description": "是否缓存",
+                    "type": "boolean"
                 },
                 "menuBtn": {
                     "type": "array",
@@ -6669,14 +6763,6 @@
                 },
                 "menuId": {
                     "type": "string"
-                },
-                "meta": {
-                    "description": "附加属性",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/system.Meta"
-                        }
-                    ]
                 },
                 "name": {
                     "description": "路由name",
@@ -6699,6 +6785,10 @@
                 "sort": {
                     "description": "排序标记",
                     "type": "integer"
+                },
+                "title": {
+                    "description": "菜单名",
+                    "type": "string"
                 },
                 "updatedAt": {
                     "description": "更新时间",

@@ -189,6 +189,7 @@ const submitForm = () => {
 // 跳转初始化
 const checkInit = async() => {
   const res = await checkDB()
+  console.log(res)
   if (res.code === 0) {
     if (res.data?.needInit) {
       userStore.NeedInit()
